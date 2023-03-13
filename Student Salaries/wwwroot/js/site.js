@@ -134,7 +134,15 @@ class NavigationPage {
         $(".nav-tab-slider").css("width", width);
         $(".nav-tab-slider").css("left", left);
     }
+
 }
+
+
+var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new bootstrap.Popover(popoverTriggerEl)
+
+})
 
 new NavigationPage();
 /* Credit and Thanks:
