@@ -2,152 +2,61 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-/* Credit and Thanks:
-Matrix - Particles.js;
-SliderJS - Ettrics;
-Design - Sara Mazal Web;
-Fonts - Google Fonts
-*/
+const carousel = document.querySelector('.carousel');
+const container = document.querySelector('.carousel-container');
+const slides = carousel.querySelector('.slides');
+const dots = carousel.querySelector('.dots');
+const dotIndicators = dots.querySelectorAll('.dot');
+const prevBtn = document.querySelector('.carousel-prev');
+const nextBtn = document.querySelector('.carousel-next');
+const images = document.querySelectorAll('.carousel img');
 
-window.onload = function () {
-    Particles.init({
-        selector: ".background"
+let currentIndex = 0;
+const maxIndex = images.length - 1;
+const imageWidth = images[0].clientWidth;
+
+function moveTo(index) {
+    currentIndex = index;
+    container.style.transform = `translateX(-${currentIndex * imageWidth}px)`;
+
+    // change the active dot indicator
+    dotIndicators.forEach((dot, i) => {
+        if (i === currentIndex) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
     });
-};
-const particles = Particles.init({
-    selector: ".background",
-    color: ["#03dac6", "#ff0266", "#000000"],
-    connectParticles: true,
-    responsive: [
-        {
-            breakpoint: 768,
-            options: {
-                color: ["#faebd7", "#03dac6", "#ff0266"],
-                maxParticles: 43,
-                connectParticles: false
-            }
-        }
-    ]
-});
-
-class NavigationPage {
-    constructor() {
-        this.currentId = null;
-        this.currentTab = null;
-        this.tabContainerHeight = 70;
-        this.lastScroll = 0;
-        let self = this;
-        $(".nav-tab").click(function () {
-            self.onTabClick(event, $(this));
-        });
-        $(window).scroll(() => {
-            this.onScroll();
-        });
-        $(window).resize(() => {
-            this.onResize();
-        });
-    }
-
-    onTabClick(event, element) {
-        event.preventDefault();
-        let scrollTop =
-            $(element.attr("href")).offset().top - this.tabContainerHeight + 1;
-        $("html, body").animate({ scrollTop: scrollTop }, 600);
-    }
-
-    onScroll() {
-        this.checkHeaderPosition();
-        this.findCurrentTabSelector();
-        this.lastScroll = $(window).scrollTop();
-    }
-
-    onResize() {
-        if (this.currentId) {
-            this.setSliderCss();
-        }
-    }
-
-    checkHeaderPosition() {
-        const headerHeight = 75;
-        if ($(window).scrollTop() > headerHeight) {
-            $(".nav-container").addClass("nav-container--scrolled");
-        } else {
-            $(".nav-container").removeClass("nav-container--scrolled");
-        }
-        let offset =
-            $(".nav").offset().top +
-            $(".nav").height() -
-            this.tabContainerHeight -
-            headerHeight;
-        if (
-            $(window).scrollTop() > this.lastScroll &&
-            $(window).scrollTop() > offset
-        ) {
-            $(".nav-container").addClass("nav-container--move-up");
-            $(".nav-container").removeClass("nav-container--top-first");
-            $(".nav-container").addClass("nav-container--top-second");
-        } else if (
-            $(window).scrollTop() < this.lastScroll &&
-            $(window).scrollTop() > offset
-        ) {
-            $(".nav-container").removeClass("nav-container--move-up");
-            $(".nav-container").removeClass("nav-container--top-second");
-            $(".nav-container-container").addClass("nav-container--top-first");
-        } else {
-            $(".nav-container").removeClass("nav-container--move-up");
-            $(".nav-container").removeClass("nav-container--top-first");
-            $(".nav-container").removeClass("nav-container--top-second");
-        }
-    }
-
-    findCurrentTabSelector(element) {
-        let newCurrentId;
-        let newCurrentTab;
-        let self = this;
-        $(".nav-tab").each(function () {
-            let id = $(this).attr("href");
-            let offsetTop = $(id).offset().top - self.tabContainerHeight;
-            let offsetBottom =
-                $(id).offset().top + $(id).height() - self.tabContainerHeight;
-            if (
-                $(window).scrollTop() > offsetTop &&
-                $(window).scrollTop() < offsetBottom
-            ) {
-                newCurrentId = id;
-                newCurrentTab = $(this);
-            }
-        });
-        if (this.currentId != newCurrentId || this.currentId === null) {
-            this.currentId = newCurrentId;
-            this.currentTab = newCurrentTab;
-            this.setSliderCss();
-        }
-    }
-
-    setSliderCss() {
-        let width = 0;
-        let left = 0;
-        if (this.currentTab) {
-            width = this.currentTab.css("width");
-            left = this.currentTab.offset().left;
-        }
-        $(".nav-tab-slider").css("width", width);
-        $(".nav-tab-slider").css("left", left);
-    }
-
 }
 
+dotIndicators.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+        moveTo(i);
+    });
+});
 
-var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
-var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-    return new bootstrap.Popover(popoverTriggerEl)
+prevBtn.addEventListener('click', () => {
+    if (currentIndex > 0) {
+        moveTo(currentIndex - 1);
+    } else {
+        moveTo(maxIndex);
+    }
+});
 
-})
+nextBtn.addEventListener('click', () => {
+    if (currentIndex < maxIndex) {
+        moveTo(currentIndex + 1);
+    } else {
+        moveTo(0);
+    }
+});
 
-new NavigationPage();
-/* Credit and Thanks:
-Matrix - Particles.js;
-SliderJS - Ettrics;
-Design - Sara Mazal Web;
-Fonts - Google Fonts
-*/
+moveTo(currentIndex);
+setInterval(() => {
+    if (currentIndex < maxIndex) {
+        moveTo(currentIndex + 1);
+    } else {
+        moveTo(0);
+    }
+}, 3000);
+
