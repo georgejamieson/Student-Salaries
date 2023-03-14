@@ -59,4 +59,4 @@ setInterval(() => {
         moveTo(0);
     }
 }, 3000);
-
+carousel.slides
